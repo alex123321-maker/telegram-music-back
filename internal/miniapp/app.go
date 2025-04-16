@@ -15,7 +15,7 @@ func Run(cfg *config.Config, logger logging.Logger) error {
 
 	app := fiber.New()
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://localhost:5173, https://mandrikov-ad.ru"}, // Разрешённые фронтенды
+		AllowOrigins:     []string{"https://localhost:5173", "https://mandrikov-ad.ru"}, // Разрешённые фронтенды
 		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
 		AllowCredentials: true,
