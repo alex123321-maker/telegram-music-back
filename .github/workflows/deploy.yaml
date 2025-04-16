@@ -41,7 +41,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH }}
           script: |
-            cd ~/telegram-music/miniapp/back
+            cd ~/telegram-music/miniapp/back/deployments
             docker login ghcr.io -u ${{ github.actor }} --password ${{ secrets.GHCR_TOKEN }}
             docker compose pull
             docker compose up -d
