@@ -22,21 +22,14 @@
     FROM alpine:3.21
     
     # Установим зависимости (curl, yt-dlp и libc)
-    RUN apk add --no-cache curl ffmpeg python3 py3-pip && \
-        pip install yt-dlp && \
-        adduser -D appuser
-    
+    RUN apk add --no-cache curl ffmpeg yt-dlp && \
+    adduser -D appuser
+
     WORKDIR /app
-    
-    # Копируем собранный бинарник из build-стадии
     COPY --from=builder /app/server .
-    
-    # Запуск от непривилегированного пользователя
+
     USER appuser
-    
-    # Порт, который будет использоваться внутри контейнера
     EXPOSE 3000
-    
-    # Запуск приложения
+
     CMD ["./server"]
     
