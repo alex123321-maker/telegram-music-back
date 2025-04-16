@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS media_tags;
+DROP TABLE IF EXISTS media;
