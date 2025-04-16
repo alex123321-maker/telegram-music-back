@@ -19,7 +19,7 @@ COPY . .
 RUN go build -o server ./cmd/miniapp
 
 # ставим golang-migrate CLI нужной версии
-RUN go install github.com/golang-migrate/migrate/v4/cmd/migrate@v4.18.2
+RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.18.2
 
 
 # ==================================================================
