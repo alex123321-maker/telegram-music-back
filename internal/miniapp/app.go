@@ -23,7 +23,7 @@ func Run(cfg *config.Config, logger logging.Logger) error {
 
 func registerRoutes(app *fiber.App) {
 
-	app.Get("/home", handler.HomeHandler)
-	app.Post("/resolve", handler.ResolveMediaHandler)
+	app.Get("api/home", handler.HomeHandler)
+	app.Post("api/resolve", handler.ResolveMediaHandler)
 
 }
