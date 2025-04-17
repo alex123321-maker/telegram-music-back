@@ -25,18 +25,15 @@ RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate
 # ==================================================================
 #                         Runtime Stage
 # ==================================================================
-FROM alpine:3.21
+FROM alpine:3.19
 
-RUN apk add --no-cache curl ffmpeg
-
-# скачиваем yt-dlp сразу в /usr/local/bin
-RUN curl -L \
-      https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp \
-    -o /usr/local/bin/yt-dlp \
-    && chmod a+rx /usr/local/bin/yt-dlp
-
-# создаём пользователя
-RUN adduser -D appuser
+# базовые утилиты + python3 для yt-dlp
+RUN apk add --no-cache \
+      curl \
+      ffmpeg \
+      python3 \
+      py3-cryptography \
+  && adduser -D appuser
 
 WORKDIR /app
 
@@ -45,10 +42,11 @@ COPY --from=builder /app/server .
 COPY --from=builder /go/bin/migrate /usr/local/bin/migrate
 COPY --from=builder /app/internal/miniapp/migrations ./migrations
 
+# копируем entrypoint-скрипт
 COPY deployments/miniapp/entrypoint.sh .
 RUN chmod +x ./entrypoint.sh
 
 USER appuser
-EXPOSE 3000
 
+EXPOSE 3000
 ENTRYPOINT ["./entrypoint.sh"]
