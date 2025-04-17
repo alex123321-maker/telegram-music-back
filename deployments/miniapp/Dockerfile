@@ -27,26 +27,25 @@ RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate
 # ==================================================================
 FROM alpine:3.19
 
-# ставим только то, что нужно для работы: yt-dlp, ffmpeg, curl
-RUN apk add --no-cache curl ffmpeg yt-dlp \
+# базовые утилиты, без yt-dlp
+RUN apk add --no-cache curl ffmpeg \
     && adduser -D appuser
 
 WORKDIR /app
 
-# копируем ваш собранный сервер
+# копируем бинарь сервера и миграции
 COPY --from=builder /app/server .
-
-# копируем утилиту migrate, установленную во время сборки
 COPY --from=builder /go/bin/migrate /usr/local/bin/migrate
-
-# копируем папку с миграциями
 COPY --from=builder /app/internal/miniapp/migrations ./migrations
 
-# снижаем привилегии
+# копируем entrypoint-скрипт
+COPY deployments/miniapp/entrypoint.sh .
+
+# права на исполнение
+RUN chmod +x ./entrypoint.sh
+
 USER appuser
 
 EXPOSE 3000
 
-# При старте сначала применяем все миграции, затем запускаем сервер
-ENTRYPOINT ["sh", "-c", \
-  "migrate -path ./migrations -database \"$DATABASE_URL\" up && exec ./server"]
+ENTRYPOINT ["./entrypoint.sh"]
