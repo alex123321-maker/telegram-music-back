@@ -44,6 +44,8 @@ COPY deployments/miniapp/entrypoint.sh .
 # права на исполнение
 RUN chmod +x ./entrypoint.sh
 
+ENV PATH="/app:${PATH}"
+
 USER appuser
 
 EXPOSE 3000
