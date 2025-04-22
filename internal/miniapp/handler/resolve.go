@@ -50,7 +50,7 @@ func ResolveMediaHandler(c fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "yt-dlp не смог обработать ссылку: "+err.Error())
 	}
 	fmt.Println("YT-DLP raw output:", string(output))
-	separator := "\x1E" // ASCII 30
+	separator := "␞" /
 	parts := strings.Split(string(output), separator)
 	if len(parts) < 8 {
 		return fiber.NewError(fiber.StatusInternalServerError, "yt-dlp вернул недостаточно данных")
