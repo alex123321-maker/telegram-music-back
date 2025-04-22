@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -40,7 +41,7 @@ func ResolveMediaHandler(c fiber.Ctx) error {
 		"--quiet", "--no-warnings",
 		"--no-playlist",
 		"--format", "bestaudio[ext=m4a]/bestaudio",
-		"--print", "%(id)s|%(title)s|%(duration)s|%(uploader)s|%(description)s|%(thumbnail)s|%(webpage_url)s|%(urls)s",
+		"--print", "%(id)s␞%(title)s␞%(duration)s␞%(uploader)s␞%(description)s␞%(thumbnail)s␞%(webpage_url)s␞%(url)s",
 		req.URL,
 	)
 
@@ -48,8 +49,9 @@ func ResolveMediaHandler(c fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "yt-dlp не смог обработать ссылку: "+err.Error())
 	}
-
-	parts := strings.Split(strings.TrimSpace(string(output)), "|")
+	fmt.Println("YT-DLP raw output:", string(output))
+	separator := "\x1E" // ASCII 30
+	parts := strings.Split(string(output), separator)
 	if len(parts) < 8 {
 		return fiber.NewError(fiber.StatusInternalServerError, "yt-dlp вернул недостаточно данных")
 	}
@@ -87,7 +89,7 @@ func ResolveMediaHandler(c fiber.Ctx) error {
 		Title:        parts[1],
 		Artist:       artistPtr,
 		Description:  descriptionPtr,
-		URL:          parts[6], // webpage_url
+		URL:          parts[6],
 		ThumbnailURL: thumbnailPtr,
 		Duration:     duration,
 		CreatedAt:    time.Now(),
