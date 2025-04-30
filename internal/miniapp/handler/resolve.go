@@ -49,8 +49,7 @@ func ResolveMediaHandler(c fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "yt-dlp не смог обработать ссылку: "+err.Error())
 	}
-	fmt.Println("YT-DLP raw output:", string(output))
-	separator := "␞" /
+	separator := "␞"
 	parts := strings.Split(string(output), separator)
 	if len(parts) < 8 {
 		return fiber.NewError(fiber.StatusInternalServerError, "yt-dlp вернул недостаточно данных")
@@ -99,6 +98,18 @@ func ResolveMediaHandler(c fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Ошибка при сохранении в базу: "+err.Error())
 	}
+	fmt.Println(" output:", c.JSON(ResolveMediaResponse{
+		ID:           id,
+		SourceID:     media.SourceID,
+		SourceType:   media.SourceType,
+		Title:        media.Title,
+		Artist:       media.Artist,
+		Description:  media.Description,
+		Duration:     media.Duration,
+		ThumbnailURL: media.ThumbnailURL,
+		AudioURL:     audioURL,
+	}))
+
 	return c.JSON(ResolveMediaResponse{
 		ID:           id, // можно заменить на media.ID после сохранения
 		SourceID:     media.SourceID,
