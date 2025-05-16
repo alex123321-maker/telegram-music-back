@@ -27,9 +27,7 @@ func ResolveUrl(req string) (ResolveMediaResponse, error) {
 		NoWarnings().
 		NoPlaylist().
 		Format("bestaudio[ext=m4a]/bestaudio").
-		Print("%(id)s␞%(title)s␞%(duration)s␞%(uploader)s␞%(description)s␞%(thumbnail)s␞%(webpage_url)s␞%(url)s").
-		Proxy("socks5://127.0.0.1:10808")
-
+		Print("%(id)s␞%(title)s␞%(duration)s␞%(uploader)s␞%(description)s␞%(thumbnail)s␞%(webpage_url)s␞%(url)s")
 	raw, err := dl.Run(context.TODO(), req)
 	if err != nil {
 		return ResolveMediaResponse{}, fmt.Errorf("ошибка при полчении ответа от dlp")
