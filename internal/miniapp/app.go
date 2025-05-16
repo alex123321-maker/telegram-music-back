@@ -9,27 +9,31 @@ import (
 
 	config "telegram-music/config/miniapp"
 	"telegram-music/internal/miniapp/handler"
+
 	"telegram-music/pkg/logging"
 )
 
 func Run(cfg *config.Config, logger logging.Logger) error {
 	app := fiber.New()
-
-	// 1) Логируем все входящие запросы
 	app.Use(func(c fiber.Ctx) error {
 		start := time.Now()
-		err := c.Next() // передаём управление дальше
-		logger.Infof(
-			"%s %s → %d (%s)",
-			c.Method(),
-			c.OriginalURL(),
-			c.Response().StatusCode(),
-			time.Since(start),
-		)
+		err := c.Next() // даём обработать запрос/ошибку
+
+		status := c.Response().StatusCode()
+		if err != nil { // если вернулась ошибка —
+			if fe, ok := err.(*fiber.Error); ok {
+				status = fe.Code
+			} else {
+				status = fiber.StatusInternalServerError
+			}
+		}
+
+		logger.Infof("%s %s → %d (%s)",
+			c.Method(), c.OriginalURL(), status, time.Since(start))
+
 		return err
 	})
 
-	// 2) CORS
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"https://localhost:5173", "https://mandrikov-ad.ru", "*"},
 		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
@@ -46,6 +50,9 @@ func Run(cfg *config.Config, logger logging.Logger) error {
 }
 
 func registerRoutes(app *fiber.App) {
-	app.Get("/api/home", handler.HomeHandler)
 	app.Post("/api/resolve", handler.ResolveMediaHandler)
+	app.Post("/api/media", handler.GetMediaByTagsHandler)
+	app.Post("/api/tags", handler.CreateTagHandler)
+	app.Get("/api/tags", handler.ListTagsHandler)
+	app.Delete("/api/tags/:id", handler.DeleteTagHandler)
 }

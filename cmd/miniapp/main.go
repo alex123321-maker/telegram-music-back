@@ -5,7 +5,7 @@ import (
 	"log"
 	config "telegram-music/config/miniapp"
 	miniapp "telegram-music/internal/miniapp"
-	database "telegram-music/internal/miniapp/database"
+	"telegram-music/internal/miniapp/database"
 	"telegram-music/pkg/logging"
 )
 
