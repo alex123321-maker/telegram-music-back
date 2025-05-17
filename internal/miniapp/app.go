@@ -57,6 +57,7 @@ func registerRoutes(app *fiber.App) {
 	app.Post("/api/media", handler.GetMediaByTagsHandler)
 	app.Post("/api/tags", handler.CreateTagHandler)
 	app.Get("/api/tags", handler.ListTagsHandler)
+	app.Get("api/media/:media_id/my-tags", handler.GetMediaTagsHandler)
 	app.Get("/api/my-tags", handler.GetUserTagsHandler)
 	app.Delete("/api/tags/:id", handler.DeleteTagHandler)
 }
