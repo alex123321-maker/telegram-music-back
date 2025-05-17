@@ -92,7 +92,7 @@ func GetUserTagsHandler(c fiber.Ctx) error {
 }
 func GetMediaTagsHandler(c fiber.Ctx) error {
 
-	media_id := c.Query("media_id", "0")
+	media_id := c.Params("media_id", "0")
 	m_id, err := strconv.Atoi(media_id)
 	if media_id == "0" || err != nil {
 		return fiber.NewError(fiber.ErrBadRequest.Code, "Неправильный media_id")
