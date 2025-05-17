@@ -15,9 +15,8 @@ import (
 --------------------------------------------------------------*/
 
 type LinkTagRequest struct {
-	TgID    int64 `json:"tg_id"`    // обязателен
-	MediaID int   `json:"media_id"` // обязателен
-	TagID   int   `json:"tag_id"`   // обязателен
+	MediaID int `json:"media_id"` // обязателен
+	TagID   int `json:"tag_id"`   // обязателен
 }
 
 type MediaTagResponse struct {
@@ -42,12 +41,12 @@ func CreateMediaTagHandler(c fiber.Ctx) error {
 	}
 
 	// валидация
-	if req.TgID <= 0 || req.MediaID <= 0 || req.TagID <= 0 {
-		return fiber.NewError(fiber.StatusBadRequest, "tg_id, media_id и tag_id должны быть > 0")
+	if req.MediaID <= 0 || req.TagID <= 0 {
+		return fiber.NewError(fiber.StatusBadRequest, "media_id и tag_id должны быть > 0")
 	}
 
 	mt, err := database.InsertMediaTagIfNotExists(
-		c.Context(), req.TgID, req.MediaID, req.TagID,
+		c.Context(), c.Locals("tg_id").(int64), req.MediaID, req.TagID,
 	)
 	if err != nil {
 		return fiber.NewError(fiber.ErrBadGateway.Code, fmt.Sprintf("Не удалось добавить тег: %s", err))
@@ -82,4 +81,12 @@ func DeleteMediaTagHandler(c fiber.Ctx) error {
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
+}
+
+func GetUserTagsHandler(c fiber.Ctx) error {
+	tags, err := database.GetTagsForUser(c.Context(), c.Locals("tg_id").(int64))
+	if err != nil {
+		return fiber.NewError(fiber.ErrBadGateway.Code, fmt.Sprintf("Ошибка получения тегов: %s", err))
+	}
+	return c.JSON(tags)
 }

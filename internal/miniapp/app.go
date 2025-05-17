@@ -9,7 +9,6 @@ import (
 
 	config "telegram-music/config/miniapp"
 	"telegram-music/internal/miniapp/handler"
-	"telegram-music/internal/miniapp/middleware"
 
 	"telegram-music/pkg/logging"
 )
@@ -34,8 +33,11 @@ func Run(cfg *config.Config, logger logging.Logger) error {
 
 		return err
 	})
-	app.Use(middleware.CheckTelegram(cfg.BotId))
-
+	// app.Use(middleware.CheckTelegram(cfg.BotId))
+	app.Use(func(c fiber.Ctx) error {
+		c.Locals("tg_id", int64(1893384316)) // Замените на ваш реальный tg_id
+		return c.Next()
+	})
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"https://localhost:5173", "https://mandrikov-ad.ru", "*"},
 		AllowMethods:     []string{"GET", "POST", "OPTIONS"},

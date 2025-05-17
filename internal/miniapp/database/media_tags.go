@@ -58,16 +58,16 @@ type MediaTagWithName struct {
 	Name  string
 }
 
-func GetTagsForMedia(ctx context.Context, mediaID int) ([]MediaTagWithName, error) {
+func GetTagsForUser(ctx context.Context, tgID int64) ([]MediaTagWithName, error) {
 	const q = `
-		SELECT mt.tag_id, t.name
+		SELECT DISTINCT t.id, t.name
 		FROM media_tags mt
 		JOIN tags t ON t.id = mt.tag_id
-		WHERE mt.media_id = $1
+		WHERE mt.tg_id = $1
 		ORDER BY t.name;
 	`
 
-	rows, err := DB.Query(ctx, q, mediaID)
+	rows, err := DB.Query(ctx, q, tgID)
 	if err != nil {
 		return nil, err
 	}
