@@ -90,3 +90,29 @@ func DeleteMediaTag(ctx context.Context, id int) error {
 	_, err := DB.Exec(ctx, `DELETE FROM media_tags WHERE id = $1;`, id)
 	return err
 }
+
+func GetTagsForMedia(ctx context.Context, mediaID int, tgID int64) ([]MediaTagWithName, error) {
+	const q = `
+		SELECT mt.tag_id, t.name
+		FROM media_tags mt
+		JOIN tags t ON t.id = mt.tag_id
+		WHERE mt.media_id = $1 AND mt.tg_id = $2
+		ORDER BY t.name;
+	`
+
+	rows, err := DB.Query(ctx, q, mediaID, tgID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var res []MediaTagWithName
+	for rows.Next() {
+		var r MediaTagWithName
+		if err := rows.Scan(&r.TagID, &r.Name); err != nil {
+			return nil, err
+		}
+		res = append(res, r)
+	}
+	return res, rows.Err()
+}

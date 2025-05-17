@@ -90,3 +90,17 @@ func GetUserTagsHandler(c fiber.Ctx) error {
 	}
 	return c.JSON(tags)
 }
+func GetMediaTagsHandler(c fiber.Ctx) error {
+
+	media_id := c.Query("media_id", "0")
+	m_id, err := strconv.Atoi(media_id)
+	if media_id == "0" || err != nil {
+		return fiber.NewError(fiber.ErrBadRequest.Code, "Неправильный media_id")
+	}
+
+	tags, err := database.GetTagsForMedia(c.Context(), m_id, c.Locals("tg_id").(int64))
+	if err != nil {
+		return fiber.NewError(fiber.ErrBadGateway.Code, fmt.Sprintf("Ошибка получения тегов: %s", err))
+	}
+	return c.JSON(tags)
+}

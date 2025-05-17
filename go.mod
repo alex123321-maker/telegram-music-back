@@ -6,12 +6,12 @@ require (
 	github.com/gofiber/fiber/v3 v3.0.0-beta.4
 	github.com/jackc/pgx/v5 v5.7.4
 	github.com/joho/godotenv v1.5.1
+	github.com/telegram-mini-apps/init-data-golang v1.5.0
 )
 
 require (
 	github.com/ProtonMail/go-crypto v1.1.5 // indirect
 	github.com/cloudflare/circl v1.6.0 // indirect
-	github.com/telegram-mini-apps/init-data-golang v1.5.0 // indirect
 )
 
 require (
