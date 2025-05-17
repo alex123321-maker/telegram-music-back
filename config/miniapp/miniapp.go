@@ -11,10 +11,20 @@ import (
 type Config struct {
 	Port        int
 	DatabaseURL string
+	BotId       int64
 }
 
 func Load() (*Config, error) {
 	_ = godotenv.Load()
+
+	botIdStr := os.Getenv("BOT_ID")
+	if botIdStr == "" {
+		botIdStr = "1234567890"
+	}
+	botId, err := strconv.ParseInt(botIdStr, 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("некорректный BOT_ID: %v", err)
+	}
 
 	portStr := os.Getenv("APP_PORT")
 	if portStr == "" {
@@ -33,5 +43,6 @@ func Load() (*Config, error) {
 	return &Config{
 		Port:        port,
 		DatabaseURL: dbURL,
+		BotId:       botId,
 	}, nil
 }

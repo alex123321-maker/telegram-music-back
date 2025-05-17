@@ -9,6 +9,7 @@ import (
 
 	config "telegram-music/config/miniapp"
 	"telegram-music/internal/miniapp/handler"
+	"telegram-music/internal/miniapp/middleware"
 
 	"telegram-music/pkg/logging"
 )
@@ -33,6 +34,7 @@ func Run(cfg *config.Config, logger logging.Logger) error {
 
 		return err
 	})
+	app.Use(middleware.CheckTelegram(cfg.BotId))
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"https://localhost:5173", "https://mandrikov-ad.ru", "*"},
@@ -41,7 +43,6 @@ func Run(cfg *config.Config, logger logging.Logger) error {
 		AllowCredentials: false,
 	}))
 
-	// 3) Маршруты
 	registerRoutes(app)
 
 	addr := fmt.Sprintf(":%d", cfg.Port)

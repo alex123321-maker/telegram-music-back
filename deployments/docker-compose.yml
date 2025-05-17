@@ -11,6 +11,7 @@ services:
           cpus: "0.75"      
           memory: 1gb        
     environment:
+      BOT_ID: 7345427057
       APP_PORT: 3000
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/telegram_music?sslmode=disable
     depends_on:
