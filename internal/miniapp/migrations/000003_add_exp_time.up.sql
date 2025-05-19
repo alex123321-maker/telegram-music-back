@@ -1,0 +1,3 @@
+ALTER TABLE media
+ADD COLUMN exptime BIGINT,
+ADD COLUMN origin_url TEXT;
